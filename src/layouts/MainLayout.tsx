@@ -9,7 +9,7 @@ import { logout } from "../redux/features/auth/authSlice";
 import { useAppDispatch } from "../redux/hooks";
 import { RxAvatar } from "react-icons/rx";
 import { useGetMeQuery } from "../redux/features/auth/authApi";
-import Loading from "../components/shared/Loading/Loading";
+import Loading from "../components/ui/Loading/Loading";
 
 const MainLayout = () => {
   const [darkMode, setDarkMode] = useState(false);

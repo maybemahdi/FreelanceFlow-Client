@@ -5,12 +5,12 @@ import { useLoginMutation } from "../../../redux/features/auth/authApi";
 import { handleAsyncWithToast } from "../../../utils/handleAsyncWithToast";
 import { toast } from "sonner";
 import { z } from "zod";
-import MyButton from "../../../components/shared/MyButton/MyButton";
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { verifyToken } from "../../../utils/verifyToken";
 import { setUser } from "../../../redux/features/auth/authSlice";
 import { useAppDispatch } from "../../../redux/hooks";
+import MyButton from "../../../components/ui/MyButton/MyButton";
 
 const LoginSchema = z
   .object({

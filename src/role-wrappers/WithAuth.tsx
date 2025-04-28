@@ -5,9 +5,9 @@ import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../redux/hooks";
 import { selectCurrentToken } from "../redux/features/auth/authSlice";
-import Loading from "../components/shared/Loading/Loading";
 import { verifyToken } from "../utils/verifyToken";
 import { JwtPayload } from "jwt-decode";
+import Loading from "../components/ui/Loading/Loading";
 
 interface CustomJwtPayload extends JwtPayload {
   role?: string;
