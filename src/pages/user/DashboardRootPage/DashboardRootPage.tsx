@@ -218,7 +218,7 @@ const DashboardRootPage = () => {
         )}
         {!isProjectLoading && !isProjectFetching && projects?.length < 1 ? (
           <Empty
-            title="No Projects Found"
+            title="No Project Found"
             description="No project found. Create project to get started."
             actionText="Create Project"
             actionPath="/projects/new"

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface IProject {
   id: string;
   title: string;
@@ -9,4 +10,19 @@ export interface IProject {
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IClient {
+  id: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  company?: string;
+  notes?: string;
+  ownerId: string;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+
+  projects?: any;
 }
