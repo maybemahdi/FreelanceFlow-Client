@@ -33,7 +33,7 @@ const LoginPage = () => {
   const [loginUser] = useLoginMutation();
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useAppDispatch();
-  const [darkMode, setDarkMode] = useState(false);
+  const [_darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");

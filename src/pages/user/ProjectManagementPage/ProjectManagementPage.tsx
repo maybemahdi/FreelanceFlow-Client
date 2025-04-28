@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import {
   useDeleteProjectMutation,
@@ -15,14 +14,18 @@ import { handleAsyncWithToast } from "../../../utils/handleAsyncWithToast";
 
 const ProjectManagementPage = () => {
   const navigate = useNavigate();
-  const [query, setQuery] = useState<{ name: string; value: any }[]>([]);
+  const [query, setQuery] = useState<
+    { name: string; value: string | number }[]
+  >([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [statusForFilter, setStatusForFilter] = useState("");
-  const [searchText, setSearchText] = useState<{ name: string; value: any }>({
-    name: "",
-    value: "",
-  });
+  const [searchText, setSearchText] = useState<{ name: string; value: string }>(
+    {
+      name: "",
+      value: "",
+    }
+  );
   useEffect(() => {
     setQuery([
       { name: "page", value: page },

@@ -17,9 +17,53 @@ const reminderApi = baseApi.injectEndpoints({
           params: params,
         };
       },
-      providesTags: ["project"],
+      providesTags: ["reminder"],
+    }),
+    getSingleReminder: builder.query({
+      query: (id) => {
+        return {
+          url: `/reminder/get-single-reminder/${id}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["reminder"],
+    }),
+    createReminder: builder.mutation({
+      query: (payload) => {
+        return {
+          url: "/reminder",
+          method: "POST",
+          body: payload,
+        };
+      },
+      invalidatesTags: ["reminder"],
+    }),
+    updateReminder: builder.mutation({
+      query: ({ payload, id }) => {
+        return {
+          url: `/reminder/${id}`,
+          method: "PATCH",
+          body: payload,
+        };
+      },
+      invalidatesTags: ["reminder"],
+    }),
+    deleteReminder: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/reminder/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["reminder"],
     }),
   }),
 });
 
-export const { useGetAllReminderQuery } = reminderApi;
+export const {
+  useGetAllReminderQuery,
+  useGetSingleReminderQuery,
+  useCreateReminderMutation,
+  useUpdateReminderMutation,
+  useDeleteReminderMutation,
+} = reminderApi;

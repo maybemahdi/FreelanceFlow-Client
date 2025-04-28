@@ -15,6 +15,8 @@ import CreateProjectPage from "../pages/user/ProjectManagementPage/AddNew/Create
 import UpdateProjectPage from "../pages/user/ProjectManagementPage/EditProject/EditProject";
 import CreateInteractionPage from "../pages/user/InteractionManagementPage/Create/CreateInteraction";
 import UpdateInteractionPage from "../pages/user/InteractionManagementPage/Update/UpdateInteraction";
+import CreateReminderPage from "../pages/user/ReminderManagementPage/AddNew/CreateReminder";
+import UpdateReminderPage from "../pages/user/ReminderManagementPage/Edit/UpdateReminder";
 
 const router = createBrowserRouter([
   // freelancer dashboard
@@ -71,6 +73,14 @@ const router = createBrowserRouter([
       {
         path: "/interactions/:interactionId",
         element: <UpdateInteractionPage />,
+      },
+      {
+        path: "/reminders/new",
+        element: <CreateReminderPage />,
+      },
+      {
+        path: "/reminders/:reminderId",
+        element: <UpdateReminderPage />,
       },
     ],
   },

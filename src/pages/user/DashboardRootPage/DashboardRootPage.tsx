@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   useGetDueSoonRemindersByFreelancerQuery,
   useGetTotalClientsByFreelancerQuery,
@@ -8,23 +6,33 @@ import {
 import { HiUsers } from "react-icons/hi2";
 import { GrTasks } from "react-icons/gr";
 import { RiAlarmFill } from "react-icons/ri";
-import { useGetAllProjectByFreelancerQuery } from "../../../redux/features/project/project.api";
+import {
+  useDeleteProjectMutation,
+  useGetAllProjectByFreelancerQuery,
+} from "../../../redux/features/project/project.api";
 import ProjectsTable from "./ProjectsTable/ProjectsTable";
-import { IProject } from "../../../types";
 import { useEffect, useState } from "react";
 import MyPagination from "../../../components/ui/MyPagination/MyPagination";
 import Loading from "../../../components/ui/Loading/Loading";
 import Empty from "../../../components/shared/Empty/Empty";
+import Swal from "sweetalert2";
+import { handleAsyncWithToast } from "../../../utils/handleAsyncWithToast";
+import { useNavigate } from "react-router-dom";
 
 const DashboardRootPage = () => {
-  const [query, setQuery] = useState<{ name: string; value: any }[]>([]);
+  const navigate = useNavigate();
+  const [query, setQuery] = useState<
+    { name: string; value: string | number }[]
+  >([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [statusForFilter, setStatusForFilter] = useState("");
-  const [searchText, setSearchText] = useState<{ name: string; value: any }>({
-    name: "",
-    value: "",
-  });
+  const [searchText, setSearchText] = useState<{ name: string; value: string }>(
+    {
+      name: "",
+      value: "",
+    }
+  );
   const {
     data: totalClientResponse,
     isLoading: isTotalClientLoading,
@@ -75,6 +83,8 @@ const DashboardRootPage = () => {
     isFetching: isProjectFetching,
   } = useGetAllProjectByFreelancerQuery(query);
 
+  const [deleteProject] = useDeleteProjectMutation();
+
   const projects = projectsResponse?.data;
 
   const handlePaginationChange = (page: number, pageSize: number) => {
@@ -85,14 +95,31 @@ const DashboardRootPage = () => {
   const onSearch = (value: string) =>
     setSearchText({ name: "searchTerm", value: value });
 
-  const handleEdit = (project: IProject) => {
-    console.log("Edit project:", project);
-    // Your edit logic here
+  const handleEdit = (projectId: string) => {
+    navigate(`/projects/${projectId}`);
   };
 
   const handleDelete = (projectId: string) => {
-    console.log("Delete project:", projectId);
-    // Your delete logic here
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await handleAsyncWithToast(async () => {
+          return deleteProject(projectId);
+        }, "Deleting...");
+        Swal.fire({
+          title: "Deleted!",
+          text: "Project has been deleted.",
+          icon: "success",
+        });
+      }
+    });
   };
 
   if (

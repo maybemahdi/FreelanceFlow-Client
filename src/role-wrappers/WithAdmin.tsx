@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { logout, selectCurrentToken } from "../redux/features/auth/authSlice";
 import { verifyToken } from "../utils/verifyToken";
-import Loading from "../components/shared/Loading/Loading";
+import Loading from "../components/ui/Loading/Loading";
 
 const WithAdmin = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();

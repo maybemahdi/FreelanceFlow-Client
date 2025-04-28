@@ -11,7 +11,7 @@ import { IReminder } from "../../../../types";
 
 interface RemindersTableProps {
   reminders: IReminder[];
-  onEdit?: (reminder: IReminder) => void;
+  onEdit?: (reminderId: string) => void;
   onDelete?: (reminderId: string) => void;
 }
 
@@ -107,7 +107,7 @@ const ReminderTable = ({
                 <td className="px-6 py-4">
                   <div className="text-sm font-medium text-gray-900 dark:text-white">
                     {reminder.message?.length > 50
-                      ? reminder?.message?.substring(0, 30) + "..."
+                      ? reminder?.message?.substring(0, 50) + "..."
                       : reminder?.message}
                   </div>
                 </td>
@@ -149,7 +149,7 @@ const ReminderTable = ({
                   <div className="flex space-x-2">
                     {onEdit && (
                       <button
-                        onClick={() => onEdit(reminder)}
+                        onClick={() => onEdit(reminder?.id)}
                         className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
                       >
                         <FiEdit className="h-5 w-5" />
@@ -157,7 +157,7 @@ const ReminderTable = ({
                     )}
                     {onDelete && (
                       <button
-                        onClick={() => onDelete(reminder.id)}
+                        onClick={() => onDelete(reminder?.id)}
                         className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
                       >
                         <FiTrash2 className="h-5 w-5" />

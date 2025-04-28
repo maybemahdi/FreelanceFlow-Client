@@ -109,10 +109,10 @@ const MyPagination: FC<PaginationProps> = ({
             <button
               key={idx}
               onClick={() => handlePageClick(p)}
-              className={`border rounded p-2 px-3 ${
+              className={`rounded p-2 px-3 ${
                 p === page
                   ? "bg-primary text-white"
-                  : "border-primary text-primary dark:text-white"
+                  : "text-primary dark:text-white"
               }`}
             >
               {p}

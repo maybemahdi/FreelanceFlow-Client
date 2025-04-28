@@ -1,22 +1,30 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { IReminder } from "../../../types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MyButton from "../../../components/ui/MyButton/MyButton";
 import { Plus } from "lucide-react";
 import ReminderTable from "./ReminderTable/ReminderTable";
 import MyPagination from "../../../components/ui/MyPagination/MyPagination";
 import Empty from "../../../components/shared/Empty/Empty";
-import { useGetAllReminderQuery } from "../../../redux/features/reminder/reminder.api";
+import {
+  useDeleteReminderMutation,
+  useGetAllReminderQuery,
+} from "../../../redux/features/reminder/reminder.api";
+import { handleAsyncWithToast } from "../../../utils/handleAsyncWithToast";
+import Swal from "sweetalert2";
 
 const ReminderManagementPage = () => {
-  const [query, setQuery] = useState<{ name: string; value: any }[]>([]);
+  const navigate = useNavigate();
+  const [query, setQuery] = useState<
+    { name: string; value: string | number }[]
+  >([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
-  const [searchText, setSearchText] = useState<{ name: string; value: any }>({
-    name: "",
-    value: "",
-  });
+  const [pageSize, setPageSize] = useState(10);
+  const [searchText, setSearchText] = useState<{ name: string; value: string }>(
+    {
+      name: "",
+      value: "",
+    }
+  );
 
   useEffect(() => {
     setQuery([
@@ -40,6 +48,8 @@ const ReminderManagementPage = () => {
     isFetching: isInteractionsFetching,
   } = useGetAllReminderQuery(query);
 
+  const [deleteReminder] = useDeleteReminderMutation();
+
   const reminders = getInteractionsResponse?.data;
 
   const handlePaginationChange = (page: number, pageSize: number) => {
@@ -50,14 +60,31 @@ const ReminderManagementPage = () => {
   const onSearch = (value: string) =>
     setSearchText({ name: "searchTerm", value: value });
 
-  const handleEdit = (reminder: IReminder) => {
-    console.log("Edit reminder:", reminder);
-    // Your edit logic here
+  const handleEdit = (reminderId: string) => {
+    navigate(`/reminders/${reminderId}`);
   };
 
-  const handleDelete = (IId: string) => {
-    console.log("Delete reminder:", IId);
-    // Your delete logic here
+  const handleDelete = (reminderId: string) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await handleAsyncWithToast(async () => {
+          return deleteReminder(reminderId);
+        }, "Deleting...");
+        Swal.fire({
+          title: "Deleted!",
+          text: "Reminder has been deleted.",
+          icon: "success",
+        });
+      }
+    });
   };
   return (
     <div className="flex flex-col gap-8">
@@ -71,7 +98,7 @@ const ReminderManagementPage = () => {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search interactions..."
+                placeholder="Search reminders..."
                 className="w-full border border-primary focus:outline-primary bg-transparent text-primary rounded-lg p-2 pr-8"
                 value={searchText.value}
                 onChange={(e) => onSearch(e.target.value)}

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import {
   useDeleteClientMutation,
@@ -15,13 +14,17 @@ import Swal from "sweetalert2";
 
 const ClientManagementPage = () => {
   const navigate = useNavigate();
-  const [query, setQuery] = useState<{ name: string; value: any }[]>([]);
+  const [query, setQuery] = useState<
+    { name: string; value: string | number }[]
+  >([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
-  const [searchText, setSearchText] = useState<{ name: string; value: any }>({
-    name: "",
-    value: "",
-  });
+  const [pageSize, setPageSize] = useState(10);
+  const [searchText, setSearchText] = useState<{ name: string; value: string }>(
+    {
+      name: "",
+      value: "",
+    }
+  );
 
   useEffect(() => {
     setQuery([
