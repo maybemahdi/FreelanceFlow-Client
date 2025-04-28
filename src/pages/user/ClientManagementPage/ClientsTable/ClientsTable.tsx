@@ -10,7 +10,7 @@ import { IClient } from "../../../../types"; // Define this type based on your P
 
 interface ClientsTableProps {
   clients: IClient[];
-  onEdit?: (client: IClient) => void;
+  onEdit?: (clientId: string) => void;
   onDelete?: (clientId: string) => void;
 }
 
@@ -116,7 +116,7 @@ const ClientsTable = ({ clients, onEdit, onDelete }: ClientsTableProps) => {
                 <div className="flex space-x-2">
                   {onEdit && (
                     <button
-                      onClick={() => onEdit(client)}
+                      onClick={() => onEdit(client?.id)}
                       className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
                     >
                       <FiEdit className="h-5 w-5" />

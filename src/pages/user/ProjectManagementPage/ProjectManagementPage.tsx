@@ -1,18 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { useGetAllProjectByFreelancerQuery } from "../../../redux/features/project/project.api";
-import { IProject } from "../../../types";
+import {
+  useDeleteProjectMutation,
+  useGetAllProjectByFreelancerQuery,
+} from "../../../redux/features/project/project.api";
 import ProjectsTable from "../DashboardRootPage/ProjectsTable/ProjectsTable";
 import MyPagination from "../../../components/ui/MyPagination/MyPagination";
 import Empty from "../../../components/shared/Empty/Empty";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MyButton from "../../../components/ui/MyButton/MyButton";
 import { FolderOpenDot } from "lucide-react";
+import Swal from "sweetalert2";
+import { handleAsyncWithToast } from "../../../utils/handleAsyncWithToast";
 
 const ProjectManagementPage = () => {
+  const navigate = useNavigate();
   const [query, setQuery] = useState<{ name: string; value: any }[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const [statusForFilter, setStatusForFilter] = useState("");
   const [searchText, setSearchText] = useState<{ name: string; value: any }>({
     name: "",
@@ -52,6 +57,8 @@ const ProjectManagementPage = () => {
     isFetching: isProjectFetching,
   } = useGetAllProjectByFreelancerQuery(query);
 
+  const [deleteProject] = useDeleteProjectMutation();
+
   const projects = projectsResponse?.data;
 
   const handlePaginationChange = (page: number, pageSize: number) => {
@@ -62,14 +69,31 @@ const ProjectManagementPage = () => {
   const onSearch = (value: string) =>
     setSearchText({ name: "searchTerm", value: value });
 
-  const handleEdit = (project: IProject) => {
-    console.log("Edit project:", project);
-    // Your edit logic here
+  const handleEdit = (projectId: string) => {
+    navigate(`/projects/${projectId}`);
   };
 
   const handleDelete = (projectId: string) => {
-    console.log("Delete project:", projectId);
-    // Your delete logic here
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await handleAsyncWithToast(async () => {
+          return deleteProject(projectId);
+        }, "Deleting...");
+        Swal.fire({
+          title: "Deleted!",
+          text: "Project has been deleted.",
+          icon: "success",
+        });
+      }
+    });
   };
   return (
     <div className="flex flex-col gap-8">

@@ -1,18 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { useGetMyClientsQuery } from "../../../redux/features/client/client.api";
+import {
+  useDeleteClientMutation,
+  useGetMyClientsQuery,
+} from "../../../redux/features/client/client.api";
 import MyPagination from "../../../components/ui/MyPagination/MyPagination";
 import Empty from "../../../components/shared/Empty/Empty";
 import ClientsTable from "./ClientsTable/ClientsTable";
 import MyButton from "../../../components/ui/MyButton/MyButton";
 import { Plus } from "lucide-react";
-import { Link } from "react-router-dom";
-import { IClient } from "../../../types";
+import { Link, useNavigate } from "react-router-dom";
+import { handleAsyncWithToast } from "../../../utils/handleAsyncWithToast";
+import Swal from "sweetalert2";
 
 const ClientManagementPage = () => {
+  const navigate = useNavigate();
   const [query, setQuery] = useState<{ name: string; value: any }[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const [searchText, setSearchText] = useState<{ name: string; value: any }>({
     name: "",
     value: "",
@@ -40,6 +45,8 @@ const ClientManagementPage = () => {
     isFetching: isMyClientsFetching,
   } = useGetMyClientsQuery(query);
 
+  const [deleteClient] = useDeleteClientMutation();
+
   const clients = getMyClientsResponse?.data;
 
   const handlePaginationChange = (page: number, pageSize: number) => {
@@ -50,14 +57,31 @@ const ClientManagementPage = () => {
   const onSearch = (value: string) =>
     setSearchText({ name: "searchTerm", value: value });
 
-  const handleEdit = (client: IClient) => {
-    console.log("Edit project:", client);
-    // Your edit logic here
+  const handleEdit = (clientId: string) => {
+    navigate(`/clients/${clientId}`);
   };
 
-  const handleDelete = (clientId: string) => {
-    console.log("Delete project:", clientId);
-    // Your delete logic here
+  const handleDelete = async (clientId: string) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await handleAsyncWithToast(async () => {
+          return deleteClient(clientId);
+        }, "Deleting...");
+        Swal.fire({
+          title: "Deleted!",
+          text: "Client has been deleted.",
+          icon: "success",
+        });
+      }
+    });
   };
   return (
     <div className="flex flex-col gap-8">
@@ -130,7 +154,7 @@ const ClientManagementPage = () => {
           <Empty
             title="No Client Found"
             description="No client found. Create client here."
-            actionText="Create Project"
+            actionText="Create Client"
             actionPath="/clients/new"
           />
         ) : (

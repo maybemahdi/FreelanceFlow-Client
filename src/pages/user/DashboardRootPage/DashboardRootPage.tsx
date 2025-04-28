@@ -19,7 +19,7 @@ import Empty from "../../../components/shared/Empty/Empty";
 const DashboardRootPage = () => {
   const [query, setQuery] = useState<{ name: string; value: any }[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const [statusForFilter, setStatusForFilter] = useState("");
   const [searchText, setSearchText] = useState<{ name: string; value: any }>({
     name: "",

@@ -19,7 +19,62 @@ const projectApi = baseApi.injectEndpoints({
       },
       providesTags: ["project"],
     }),
+    getSingleProject: builder.query({
+      query: (id) => {
+        return {
+          url: `/project/get-single-project-by-freelancer/${id}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["project"],
+    }),
+    createProject: builder.mutation({
+      query: (payload) => {
+        return {
+          url: "/project",
+          method: "POST",
+          body: payload,
+        };
+      },
+      invalidatesTags: ["project"],
+    }),
+    updateProject: builder.mutation({
+      query: ({ payload, id }) => {
+        return {
+          url: `/project/${id}`,
+          method: "PATCH",
+          body: payload,
+        };
+      },
+      invalidatesTags: ["project"],
+    }),
+    updateProjectStatus: builder.mutation({
+      query: ({ payload, id }) => {
+        return {
+          url: `/project/update-project-status/${id}`,
+          method: "PATCH",
+          body: payload,
+        };
+      },
+      invalidatesTags: ["project"],
+    }),
+    deleteProject: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/project/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["project"],
+    }),
   }),
 });
 
-export const { useGetAllProjectByFreelancerQuery } = projectApi;
+export const {
+  useGetAllProjectByFreelancerQuery,
+  useGetSingleProjectQuery,
+  useCreateProjectMutation,
+  useUpdateProjectMutation,
+  useUpdateProjectStatusMutation,
+  useDeleteProjectMutation,
+} = projectApi;

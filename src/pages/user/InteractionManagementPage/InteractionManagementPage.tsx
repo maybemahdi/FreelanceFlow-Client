@@ -12,7 +12,7 @@ import Empty from "../../../components/shared/Empty/Empty";
 const InteractionManagementPage = () => {
   const [query, setQuery] = useState<{ name: string; value: any }[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const [searchText, setSearchText] = useState<{ name: string; value: any }>({
     name: "",
     value: "",

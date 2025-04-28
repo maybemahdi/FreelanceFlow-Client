@@ -10,7 +10,7 @@ import { IProject } from "../../../../types";
 
 interface ProjectsTableProps {
   projects: IProject[];
-  onEdit?: (project: IProject) => void;
+  onEdit?: (projectId: string) => void;
   onDelete?: (projectId: string) => void;
 }
 
@@ -140,7 +140,7 @@ const ProjectsTable = ({ projects, onEdit, onDelete }: ProjectsTableProps) => {
                 <div className="flex space-x-2">
                   {onEdit && (
                     <button
-                      onClick={() => onEdit(project)}
+                      onClick={() => onEdit(project?.id)}
                       className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
                     >
                       <FiEdit className="h-5 w-5" />
