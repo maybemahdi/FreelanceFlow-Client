@@ -14,11 +14,12 @@ import { IProject } from "../../../types";
 import { useEffect, useState } from "react";
 import MyPagination from "../../../components/ui/MyPagination/MyPagination";
 import Loading from "../../../components/ui/Loading/Loading";
+import Empty from "../../../components/shared/Empty/Empty";
 
 const DashboardRootPage = () => {
   const [query, setQuery] = useState<{ name: string; value: any }[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(1);
   const [statusForFilter, setStatusForFilter] = useState("");
   const [searchText, setSearchText] = useState<{ name: string; value: any }>({
     name: "",
@@ -41,8 +42,7 @@ const DashboardRootPage = () => {
   } = useGetDueSoonRemindersByFreelancerQuery(undefined);
 
   useEffect(() => {
-    setQuery((prevQuery) => [
-      ...prevQuery.filter((q) => q.name !== "page" && q.name !== "limit"),
+    setQuery([
       { name: "page", value: page },
       { name: "limit", value: pageSize },
     ]);
@@ -50,24 +50,30 @@ const DashboardRootPage = () => {
 
   useEffect(() => {
     setPage(1);
-    setQuery((prevQuery) => {
-      const updatedQuery = prevQuery.filter((q) => q.name !== "status");
-      if (statusForFilter) {
-        updatedQuery.push({ name: "status", value: statusForFilter });
-      }
-      return updatedQuery;
-    });
+    setQuery([
+      { name: "page", value: page },
+      { name: "limit", value: pageSize },
+      {
+        name: "status",
+        value: statusForFilter,
+      },
+    ]);
   }, [statusForFilter]);
 
   useEffect(() => {
     setPage(1);
-    setQuery((prevQuery) => [
-      ...prevQuery.filter((q) => q.name !== "searchTerm"),
+    setQuery([
+      { name: "page", value: page },
+      { name: "limit", value: pageSize },
       searchText,
     ]);
   }, [searchText]);
 
-  const { data: projectsResponse } = useGetAllProjectByFreelancerQuery(query);
+  const {
+    data: projectsResponse,
+    isLoading: isProjectLoading,
+    isFetching: isProjectFetching,
+  } = useGetAllProjectByFreelancerQuery(query);
 
   const projects = projectsResponse?.data;
 
@@ -155,13 +161,16 @@ const DashboardRootPage = () => {
               <input
                 type="text"
                 placeholder="Search projects..."
-                className="border border-primary focus:outline-primary bg-transparent text-primary rounded-lg p-2 pr-8"
+                className="w-full border border-primary focus:outline-primary bg-transparent text-primary rounded-lg p-2 pr-8"
+                value={searchText.value}
                 onChange={(e) => onSearch(e.target.value)}
               />
               {searchText.value ? (
                 <button
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-primary"
-                  onClick={() => onSearch("")}
+                  onClick={() =>
+                    setSearchText({ name: "searchTerm", value: "" })
+                  }
                 >
                   ✕
                 </button>
@@ -181,20 +190,42 @@ const DashboardRootPage = () => {
             </select>
           </div>
         </div>
-        <div className="w-full">
-          <ProjectsTable
-            projects={projects}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
+        {!isProjectLoading && !isProjectFetching ? (
+          <div className="w-full">
+            <ProjectsTable
+              projects={projects}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+            <MyPagination
+              page={page}
+              pageSize={pageSize}
+              total={projectsResponse?.meta?.total || 0}
+              onPageChange={handlePaginationChange}
+            />
+          </div>
+        ) : (
+          ""
+        )}
+        {isProjectLoading || isProjectFetching ? (
+          <div className="w-full gap-x-2 flex justify-center items-center h-[200px]">
+            <div className="w-5 bg-[#d991c2] animate-pulse h-5 rounded-full animate-bounce"></div>
+            <div className="w-5 animate-pulse h-5 bg-[#9869b8] rounded-full animate-bounce"></div>
+            <div className="w-5 h-5 animate-pulse bg-[#6756cc] rounded-full animate-bounce"></div>
+          </div>
+        ) : (
+          ""
+        )}
+        {!isProjectLoading && !isProjectFetching && projects?.length < 1 ? (
+          <Empty
+            title="No Projects Found"
+            description="No project found. Create project to get started."
+            actionText="Create Project"
+            actionPath="/projects/new"
           />
-        </div>
-        {/* Pagination */}
-        <MyPagination
-          page={page}
-          pageSize={pageSize}
-          total={projectsResponse?.meta?.total || 50}
-          onPageChange={handlePaginationChange}
-        />
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );

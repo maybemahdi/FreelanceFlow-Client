@@ -92,48 +92,48 @@ const ProjectsTable = ({ projects, onEdit, onDelete }: ProjectsTableProps) => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200 dark:bg-slate-800 dark:divide-gray-700">
-          {projects.map((project) => (
+          {projects?.map((project) => (
             <tr
-              key={project.id}
+              key={project?.id}
               className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-500"
             >
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
                   <div className="">
                     <div className="text-sm font-medium text-gray-900 dark:text-white">
-                      {project.title}
+                      {project?.title}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                      Created: {formatDate(project.createdAt)}
+                      Created: {formatDate(project?.createdAt)}
                     </div>
                   </div>
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-gray-900 dark:text-white">
-                  {formatCurrency(project.budget)}
+                  {formatCurrency(project?.budget)}
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div
                   className={`text-sm ${
-                    new Date(project.deadline) < new Date() &&
-                    project.status !== "COMPLETED"
+                    new Date(project?.deadline) < new Date() &&
+                    project?.status !== "COMPLETED"
                       ? "text-red-500"
                       : "text-gray-500 dark:text-gray-400"
                   }`}
                 >
-                  {formatDate(project.deadline)}
+                  {formatDate(project?.deadline)}
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span
                   className={`px-2 inline-flex items-center text-xs leading-5 font-semibold rounded-full ${
-                    statusConfig[project.status].color
+                    statusConfig[project?.status].color
                   }`}
                 >
-                  {statusConfig[project.status].icon}
-                  {statusConfig[project.status].label}
+                  {statusConfig[project?.status].icon}
+                  {statusConfig[project?.status].label}
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -148,7 +148,7 @@ const ProjectsTable = ({ projects, onEdit, onDelete }: ProjectsTableProps) => {
                   )}
                   {onDelete && (
                     <button
-                      onClick={() => onDelete(project.id)}
+                      onClick={() => onDelete(project?.id)}
                       className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
                     >
                       <FiTrash2 className="h-5 w-5" />
@@ -161,7 +161,7 @@ const ProjectsTable = ({ projects, onEdit, onDelete }: ProjectsTableProps) => {
         </tbody>
       </table>
 
-      {projects.length === 0 && (
+      {projects?.length === 0 && (
         <div className="bg-white dark:bg-gray-800 p-8 text-center">
           <p className="text-gray-500 dark:text-gray-400">No projects found</p>
         </div>

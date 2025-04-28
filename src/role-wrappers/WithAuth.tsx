@@ -20,10 +20,12 @@ const WithAuth = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (token) {
       const decoded: CustomJwtPayload = verifyToken(token);
-      if (!decoded || decoded.role !== "FREELANCER") {
-        navigate("/login"); // Redirect if not authenticated
+      if (!decoded) {
+        navigate("/login");
+      } else if (decoded?.role !== "FREELANCER") {
+        navigate("/login");
       } else {
-        setLoading(false); // Stop loading once authenticated
+        setLoading(false);
       }
     } else {
       navigate("/login");
@@ -31,10 +33,10 @@ const WithAuth = ({ children }: { children: ReactNode }) => {
   }, [token, navigate]);
 
   if (loading) {
-    return <Loading />; // Prevent rendering anything while loading
+    return <Loading />;
   }
 
-  return children; // Render the children if authenticated
+  return children;
 };
 
 export default WithAuth;

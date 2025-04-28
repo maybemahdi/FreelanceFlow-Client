@@ -39,11 +39,44 @@ const MyPagination: FC<PaginationProps> = ({
     onPageChange(1, Number(e.target.value)); // reset to page 1
   };
 
-  if (totalPages <= 1) return null; // Hide pagination if only 1 page
+  const generatePageNumbers = () => {
+    const pages: (number | string)[] = [];
+
+    if (totalPages <= 7) {
+      // Less than 7 pages, show all
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // More than 7 pages
+      pages.push(1);
+
+      if (page > 4) {
+        pages.push("...");
+      }
+
+      const startPage = Math.max(2, page - 1);
+      const endPage = Math.min(totalPages - 1, page + 1);
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
+      if (page < totalPages - 3) {
+        pages.push("...");
+      }
+
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
+
+  if (totalPages <= 1) return null;
 
   return (
     <div className="flex items-center justify-between flex-wrap gap-3 mt-4">
-      {/* Left Side: Page Size Changer */}
+      {/* Left: Page size changer */}
       {showPageSizeChanger && (
         <div className="flex items-center gap-2 text-primary dark:text-white">
           <span>Items per page:</span>
@@ -61,8 +94,8 @@ const MyPagination: FC<PaginationProps> = ({
         </div>
       )}
 
-      {/* Right Side: Pagination Controls */}
-      <div className="flex items-center gap-2">
+      {/* Right: Pagination buttons */}
+      <div className="flex items-center gap-1 flex-wrap">
         <button
           onClick={handlePrev}
           disabled={page === 1}
@@ -71,20 +104,23 @@ const MyPagination: FC<PaginationProps> = ({
           Prev
         </button>
 
-        {/* Page numbers */}
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-          (pageNumber) => (
+        {generatePageNumbers().map((p, idx) =>
+          typeof p === "number" ? (
             <button
-              key={pageNumber}
-              onClick={() => handlePageClick(pageNumber)}
+              key={idx}
+              onClick={() => handlePageClick(p)}
               className={`border rounded p-2 px-3 ${
-                pageNumber === page
+                p === page
                   ? "bg-primary text-white"
                   : "border-primary text-primary dark:text-white"
               }`}
             >
-              {pageNumber}
+              {p}
             </button>
+          ) : (
+            <span key={idx} className="px-2 text-primary dark:text-white">
+              ...
+            </span>
           )
         )}
 
