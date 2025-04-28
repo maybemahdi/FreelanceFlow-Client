@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { IoClose, IoMenu } from 'react-icons/io5';
 import { Link, useLocation } from 'react-router-dom';
 import menuItems from '../../../data/menuItems'; // assuming you have a menuItems data file
-import Button from '../Button/Button'; // Assuming Button component is created
+import Button from '../Button/MyButton'; // Assuming Button component is created
 import Headroom from 'react-headroom';
 
 const Navbar = () => {

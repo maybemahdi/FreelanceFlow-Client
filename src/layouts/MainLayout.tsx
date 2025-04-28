@@ -1,9 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect, useRef } from "react";
 import { FiMenu, FiX, FiSun, FiMoon, FiBell, FiLogOut } from "react-icons/fi";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import menuItems from "../data/menuItems";
 import logo from "../assets/logo.png";
+import Swal from "sweetalert2";
+import { logout } from "../redux/features/auth/authSlice";
+import { useAppDispatch } from "../redux/hooks";
+import { RxAvatar } from "react-icons/rx";
+import { useGetMeQuery } from "../redux/features/auth/authApi";
+import Loading from "../components/shared/Loading/Loading";
 
 const MainLayout = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -11,6 +17,16 @@ const MainLayout = () => {
   const currentPath = window.location.pathname;
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const {
+    data: getMeResponse,
+    isLoading: isGetMeLoading,
+    isFetching: isGetMeFetching,
+  } = useGetMeQuery(undefined);
+
+  const userData = getMeResponse?.data || null;
 
   // Handle click outside dropdown
   useEffect(() => {
@@ -57,18 +73,34 @@ const MainLayout = () => {
   };
 
   const handleLogout = () => {
-    // Implement your logout logic:
-    // 1. Clear authentication tokens (cookie/localStorage)
-    // 2. Redirect to login page
-    console.log("Logging out...");
-    // Example:
-    // localStorage.removeItem('authToken');
-    // window.location.href = '/login';
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, sign out!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(logout());
+        Swal.fire({
+          title: "Success!",
+          text: "Sign out successful.",
+          icon: "success",
+        });
+        navigate("/");
+      }
+    });
   };
+
+  if (isGetMeLoading || isGetMeFetching) {
+    return <Loading />;
+  }
 
   return (
     <div
-      className={`flex h-screen bg-gray-50 dark:bg-slate-800 transition-colors duration-200`}
+      className={`flex h-screen bg-gray-50 dark:bg-slate-800 text-black dark:text-white transition-colors duration-200`}
     >
       {/* Mobile sidebar overlay */}
       {mobileMenuOpen && (
@@ -82,10 +114,6 @@ const MainLayout = () => {
       <aside className="hidden lg:flex lg:flex-shrink-0">
         <div className="flex flex-col w-64 border-r border-gray-200 dark:border-gray-700 bg-slate-100 dark:bg-slate-800">
           <div className="flex items-center h-16 px-4 border-b border-gray-200 dark:border-gray-700">
-            {/* <h1 className="text-xl font-bold text-gray-800 dark:text-white">
-              FreelanceFlow
-            </h1> */}
-            {/* logo */}
             <Link to={"/"} className="w-full">
               <img
                 src={logo}
@@ -117,19 +145,15 @@ const MainLayout = () => {
           </nav>
           <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <img
-                  className="w-10 h-10 rounded-full"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt="User profile"
-                />
+              <div className="flex items-center text-sm rounded-full focus:outline-none text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
+                <RxAvatar size={35} />
               </div>
               <div className="ml-3">
                 <p className="text-sm font-medium text-gray-800 dark:text-white">
-                  John Doe
+                  {userData?.name}
                 </p>
                 <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                  Admin
+                  {userData?.role}
                 </p>
               </div>
             </div>
@@ -219,13 +243,9 @@ const MainLayout = () => {
             <div ref={dropdownRef} className="relative">
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="flex items-center text-sm rounded-full focus:outline-none"
+                className="flex items-center text-sm rounded-full focus:outline-none text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
               >
-                <img
-                  className="w-8 h-8 rounded-full"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt="User profile"
-                />
+                <RxAvatar size={35} />
               </button>
 
               {profileOpen && (
@@ -259,7 +279,7 @@ const MainLayout = () => {
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto bg-slate-100 dark:bg-slate-800">
-          <div className="p-4">
+          <div className="p-5 max-w-7xl">
             <Outlet />
           </div>
         </main>

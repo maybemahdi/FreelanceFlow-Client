@@ -24,6 +24,7 @@
     "react-router-dom": "^6.28.2",
     "redux-persist": "^6.0.0",
     "sonner": "^1.7.2",
+    "sweetalert2": "^11.19.1",
     "tailwind-merge": "^2.6.0",
     "zod": "^3.24.1"
   },
