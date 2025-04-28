@@ -1,23 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { useGetMyClientsQuery } from "../../../redux/features/client/client.api";
+import { useGetAllProjectByFreelancerQuery } from "../../../redux/features/project/project.api";
+import { IProject } from "../../../types";
+import ProjectsTable from "../DashboardRootPage/ProjectsTable/ProjectsTable";
 import MyPagination from "../../../components/ui/MyPagination/MyPagination";
 import Empty from "../../../components/shared/Empty/Empty";
-import ClientsTable from "./ClientsTable/ClientsTable";
-import MyButton from "../../../components/ui/MyButton/MyButton";
-import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
-import { IClient } from "../../../types";
+import MyButton from "../../../components/ui/MyButton/MyButton";
+import { FolderOpenDot } from "lucide-react";
 
-const ClientManagementPage = () => {
+const ProjectManagementPage = () => {
   const [query, setQuery] = useState<{ name: string; value: any }[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(1);
+  const [statusForFilter, setStatusForFilter] = useState("");
   const [searchText, setSearchText] = useState<{ name: string; value: any }>({
     name: "",
     value: "",
   });
-
   useEffect(() => {
     setQuery([
       { name: "page", value: page },
@@ -30,17 +30,29 @@ const ClientManagementPage = () => {
     setQuery([
       { name: "page", value: page },
       { name: "limit", value: pageSize },
+      {
+        name: "status",
+        value: statusForFilter,
+      },
+    ]);
+  }, [statusForFilter]);
+
+  useEffect(() => {
+    setPage(1);
+    setQuery([
+      { name: "page", value: page },
+      { name: "limit", value: pageSize },
       searchText,
     ]);
   }, [searchText]);
 
   const {
-    data: getMyClientsResponse,
-    isLoading: isMyClientsLoading,
-    isFetching: isMyClientsFetching,
-  } = useGetMyClientsQuery(query);
+    data: projectsResponse,
+    isLoading: isProjectLoading,
+    isFetching: isProjectFetching,
+  } = useGetAllProjectByFreelancerQuery(query);
 
-  const clients = getMyClientsResponse?.data;
+  const projects = projectsResponse?.data;
 
   const handlePaginationChange = (page: number, pageSize: number) => {
     setPage(page);
@@ -50,28 +62,28 @@ const ClientManagementPage = () => {
   const onSearch = (value: string) =>
     setSearchText({ name: "searchTerm", value: value });
 
-  const handleEdit = (client: IClient) => {
-    console.log("Edit project:", client);
+  const handleEdit = (project: IProject) => {
+    console.log("Edit project:", project);
     // Your edit logic here
   };
 
-  const handleDelete = (clientId: string) => {
-    console.log("Delete project:", clientId);
+  const handleDelete = (projectId: string) => {
+    console.log("Delete project:", projectId);
     // Your delete logic here
   };
   return (
     <div className="flex flex-col gap-8">
-      {/* client table */}
+      {/* project table by status */}
       <div className="flex flex-col gap-5">
         <div className="flex flex-col md:flex-row gap-5 justify-between">
           <h2 className="font-semibold text-2xl text-primary dark:text">
-            Manage Clients
+            Manage Projects
           </h2>
           <div className="flex flex-col md:flex-row md:items-center gap-3">
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search clients..."
+                placeholder="Search projects..."
                 className="w-full border border-primary focus:outline-primary bg-transparent text-primary rounded-lg p-2 pr-8"
                 value={searchText.value}
                 onChange={(e) => onSearch(e.target.value)}
@@ -89,35 +101,45 @@ const ClientManagementPage = () => {
                 ""
               )}
             </div>
+            <select
+              className="border border-primary focus:outline-primary bg-transparent text-primary rounded-lg p-2 cursor-pointer"
+              onChange={(e) => setStatusForFilter(e.target.value)}
+            >
+              <option value="">All</option>
+              <option value="NOT_STARTED">Not Started</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="ON_HOLD">On Hold</option>
+            </select>
             <div>
-              <Link to={"/clients/new"}>
+              <Link to={"/projects/new"}>
                 <MyButton
-                  label="Add Client"
-                  customIcon={<Plus />}
+                  label="Create Project"
+                  customIcon={<FolderOpenDot />}
                   className="py-[9.7px]"
                 />
               </Link>
             </div>
           </div>
         </div>
-        {!isMyClientsLoading && !isMyClientsFetching ? (
+        {!isProjectLoading && !isProjectFetching ? (
           <div className="w-full">
-            <ClientsTable
-              clients={clients}
+            <ProjectsTable
+              projects={projects}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
             <MyPagination
               page={page}
               pageSize={pageSize}
-              total={getMyClientsResponse?.meta?.total || 0}
+              total={projectsResponse?.meta?.total || 0}
               onPageChange={handlePaginationChange}
             />
           </div>
         ) : (
           ""
         )}
-        {isMyClientsLoading || isMyClientsFetching ? (
+        {isProjectLoading || isProjectFetching ? (
           <div className="w-full gap-x-2 flex justify-center items-center h-[200px]">
             <div className="w-5 bg-[#d991c2] animate-pulse h-5 rounded-full animate-bounce"></div>
             <div className="w-5 animate-pulse h-5 bg-[#9869b8] rounded-full animate-bounce"></div>
@@ -126,12 +148,12 @@ const ClientManagementPage = () => {
         ) : (
           ""
         )}
-        {!isMyClientsLoading && !isMyClientsFetching && clients?.length < 1 ? (
+        {!isProjectLoading && !isProjectFetching && projects?.length < 1 ? (
           <Empty
-            title="No Client Found"
-            description="No client found. Create client here."
+            title="No Project Found"
+            description="No project found. Create project to get started."
             actionText="Create Project"
-            actionPath="/clients/new"
+            actionPath="/projects/new"
           />
         ) : (
           ""
@@ -141,4 +163,4 @@ const ClientManagementPage = () => {
   );
 };
 
-export default ClientManagementPage;
+export default ProjectManagementPage;

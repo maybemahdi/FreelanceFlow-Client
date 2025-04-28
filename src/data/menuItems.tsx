@@ -1,4 +1,4 @@
-import { FiBell, FiBriefcase, FiCalendar, FiHome, FiMail, FiUsers } from "react-icons/fi";
+import { FiBell, FiBriefcase, FiHome, FiMail, FiUsers } from "react-icons/fi";
 
 const menuItems = [
   { name: "Dashboard", path: "/", icon: <FiHome /> },
@@ -6,6 +6,6 @@ const menuItems = [
   { name: "Projects", path: "/projects", icon: <FiBriefcase /> },
   { name: "Interactions", path: "/interactions", icon: <FiMail /> },
   { name: "Reminders", path: "/reminders", icon: <FiBell /> },
-  { name: "Calendar", path: "/calendar", icon: <FiCalendar /> },
+  // { name: "Calendar", path: "/calendar", icon: <FiCalendar /> },
 ];
 export default menuItems;

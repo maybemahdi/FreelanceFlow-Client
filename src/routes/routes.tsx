@@ -6,6 +6,9 @@ import DashboardRootPage from "../pages/user/DashboardRootPage/DashboardRootPage
 import LoginPage from "../pages/auth/LoginPage/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage/RegisterPage";
 import ClientManagementPage from "../pages/user/ClientManagementPage/ClientManagementPage";
+import ProjectManagementPage from "../pages/user/ProjectManagementPage/ProjectManagementPage";
+import InteractionManagementPage from "../pages/user/InteractionManagementPage/InteractionManagementPage";
+import ReminderManagementPage from "../pages/user/ReminderManagementPage/ReminderManagementPage";
 
 const router = createBrowserRouter([
   // freelancer dashboard
@@ -26,6 +29,18 @@ const router = createBrowserRouter([
       {
         path: "/clients",
         element: <ClientManagementPage />,
+      },
+      {
+        path: "/projects",
+        element: <ProjectManagementPage />,
+      },
+      {
+        path: "/interactions",
+        element: <InteractionManagementPage />,
+      },
+      {
+        path: "/reminders",
+        element: <ReminderManagementPage />,
       },
     ],
   },
