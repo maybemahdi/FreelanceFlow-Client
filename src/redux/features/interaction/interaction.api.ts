@@ -17,9 +17,53 @@ const interactionApi = baseApi.injectEndpoints({
           params: params,
         };
       },
-      providesTags: ["project"],
+      providesTags: ["interaction"],
+    }),
+    getSingleInteraction: builder.query({
+      query: (id) => {
+        return {
+          url: `/interaction/get-single-interaction/${id}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["interaction"],
+    }),
+    createInteraction: builder.mutation({
+      query: (payload) => {
+        return {
+          url: "/interaction",
+          method: "POST",
+          body: payload,
+        };
+      },
+      invalidatesTags: ["interaction"],
+    }),
+    updateInteraction: builder.mutation({
+      query: ({ payload, id }) => {
+        return {
+          url: `/interaction/${id}`,
+          method: "PATCH",
+          body: payload,
+        };
+      },
+      invalidatesTags: ["interaction"],
+    }),
+    deleteInteraction: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/interaction/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["interaction"],
     }),
   }),
 });
 
-export const { useGetAllInteractionQuery } = interactionApi;
+export const {
+  useGetAllInteractionQuery,
+  useGetSingleInteractionQuery,
+  useCreateInteractionMutation,
+  useUpdateInteractionMutation,
+  useDeleteInteractionMutation,
+} = interactionApi;

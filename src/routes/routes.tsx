@@ -13,6 +13,8 @@ import CreateClientPage from "../pages/user/ClientManagementPage/AddNew/AddNew";
 import UpdateClientPage from "../pages/user/ClientManagementPage/EditClient/EditClient";
 import CreateProjectPage from "../pages/user/ProjectManagementPage/AddNew/CreateProject";
 import UpdateProjectPage from "../pages/user/ProjectManagementPage/EditProject/EditProject";
+import CreateInteractionPage from "../pages/user/InteractionManagementPage/Create/CreateInteraction";
+import UpdateInteractionPage from "../pages/user/InteractionManagementPage/Update/UpdateInteraction";
 
 const router = createBrowserRouter([
   // freelancer dashboard
@@ -61,6 +63,14 @@ const router = createBrowserRouter([
       {
         path: "/projects/:projectId",
         element: <UpdateProjectPage />,
+      },
+      {
+        path: "/interactions/new",
+        element: <CreateInteractionPage />,
+      },
+      {
+        path: "/interactions/:interactionId",
+        element: <UpdateInteractionPage />,
       },
     ],
   },

@@ -1,15 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MyButton from "../../../components/ui/MyButton/MyButton";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { IInteraction } from "../../../types";
-import { useGetAllInteractionQuery } from "../../../redux/features/interaction/interaction.api";
+import {
+  useDeleteInteractionMutation,
+  useGetAllInteractionQuery,
+} from "../../../redux/features/interaction/interaction.api";
 import InteractionTable from "./InteractionTable/InteractionTable";
 import MyPagination from "../../../components/ui/MyPagination/MyPagination";
 import Empty from "../../../components/shared/Empty/Empty";
+import Swal from "sweetalert2";
+import { handleAsyncWithToast } from "../../../utils/handleAsyncWithToast";
 
 const InteractionManagementPage = () => {
+  const navigate = useNavigate();
   const [query, setQuery] = useState<{ name: string; value: any }[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -40,6 +45,8 @@ const InteractionManagementPage = () => {
     isFetching: isInteractionsFetching,
   } = useGetAllInteractionQuery(query);
 
+  const [deleteInteraction] = useDeleteInteractionMutation();
+
   const interactions = getInteractionsResponse?.data;
 
   const handlePaginationChange = (page: number, pageSize: number) => {
@@ -50,14 +57,31 @@ const InteractionManagementPage = () => {
   const onSearch = (value: string) =>
     setSearchText({ name: "searchTerm", value: value });
 
-  const handleEdit = (interaction: IInteraction) => {
-    console.log("Edit interaction:", interaction);
-    // Your edit logic here
+  const handleEdit = (interactionId: string) => {
+    navigate(`/interactions/${interactionId}`);
   };
 
-  const handleDelete = (IId: string) => {
-    console.log("Delete interaction:", IId);
-    // Your delete logic here
+  const handleDelete = (interactionId: string) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await handleAsyncWithToast(async () => {
+          return deleteInteraction(interactionId);
+        }, "Deleting...");
+        Swal.fire({
+          title: "Deleted!",
+          text: "Interaction has been deleted.",
+          icon: "success",
+        });
+      }
+    });
   };
   return (
     <div className="flex flex-col gap-8">

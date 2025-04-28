@@ -37,7 +37,7 @@ const interactionTypeConfig = {
 
 interface InteractionsTableProps {
   interactions: IInteraction[];
-  onEdit?: (interaction: IInteraction) => void;
+  onEdit?: (interactionId: string) => void;
   onDelete?: (interactionId: string) => void;
 }
 
@@ -139,7 +139,7 @@ const InteractionTable = ({
                 <div className="flex space-x-2">
                   {onEdit && (
                     <button
-                      onClick={() => onEdit(interaction)}
+                      onClick={() => onEdit(interaction?.id)}
                       className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
                     >
                       <FiEdit className="h-5 w-5" />
