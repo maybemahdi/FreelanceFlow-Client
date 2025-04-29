@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import WithAuth from "../role-wrappers/WithAuth";
 import DashboardRootPage from "../pages/user/DashboardRootPage/DashboardRootPage";
-// import NotFoundPage from "../pages/common/NotFoundPage/NotFoundPage";
+import NotFoundPage from "../pages/common/NotFoundPage/NotFoundPage";
 import LoginPage from "../pages/auth/LoginPage/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage/RegisterPage";
 import ClientManagementPage from "../pages/user/ClientManagementPage/ClientManagementPage";
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
       </WithAuth>
     ),
 
-    // errorElement: <NotFoundPage />,
+    errorElement: <NotFoundPage />,
     children: [
       {
         index: true,
