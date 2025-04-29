@@ -9,6 +9,7 @@ import {
 import { RootState } from "../store";
 import { logout, setUser } from "../features/auth/authSlice";
 import { toast } from "sonner";
+import { verifyToken } from "../../utils/verifyToken";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
@@ -40,8 +41,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
   }
   if (result?.error?.status === 401) {
     //* Send Refresh
-    console.log("Sending refresh token");
-
+    // console.log("Sending refresh token");
     const res = await fetch(
       `${import.meta.env.VITE_API_URL}/auth/refresh-token`,
       {
@@ -50,15 +50,15 @@ const baseQueryWithRefreshToken: BaseQueryFn<
       }
     );
 
-    const data = await res.json();
+    const response = await res.json();
 
-    if (data?.data?.accessToken) {
-      const user = (api.getState() as RootState).auth.user;
+    if (response?.success) {
+      const user = verifyToken(response?.data?.accessToken);
 
       api.dispatch(
         setUser({
-          user,
-          token: data.data.accessToken,
+          user: user,
+          token: response?.data?.accessToken,
         })
       );
 
@@ -74,6 +74,14 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithRefreshToken,
-  tagTypes: ["user", "freelancer", "admin", "client", "project", "reminder", "interaction"],
+  tagTypes: [
+    "user",
+    "freelancer",
+    "admin",
+    "client",
+    "project",
+    "reminder",
+    "interaction",
+  ],
   endpoints: () => ({}),
 });
