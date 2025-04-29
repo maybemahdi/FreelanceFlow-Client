@@ -16,7 +16,38 @@
     ```  
 4. Configure environment variables:  
     - Create a `.env` file in the root directory.  
-    - Add the required variables (e.g., database URL, JWT secret).  
+    - Add the required variables (e.g., database URL, JWT secret).
+    - Example ENV (FRONTEND):
+    ```bash  
+    VITE_API_URL=http://localhost:5000/api/v1  
+    ```
+    - Example ENV (SERVER):
+    ```bash  
+    # DATABASE_URL
+    DATABASE_URL=
+
+    PORT=
+    BCRYPT_SALT_ROUNDS=
+    NODE_ENV=
+    
+    # NODE_MAILER
+    EMAIL=
+    PASSWORD=
+    
+    # JWT
+    JWT_ACCESS_SECRET=
+    JWT_REFRESH_SECRET=
+    JWT_ACCESS_EXPIRES_IN=
+    JWT_REFRESH_EXPIRES_IN=
+    RESET_PASS_TOKEN=
+    RESET_PASS_TOKEN_EXPIRES_IN=
+    RESET_PASS_UI_LINK=
+
+    # cloudinary
+    CLOUDINARY_CLOUD_NAME=
+    CLOUDINARY_API_KEY=
+    CLOUDINARY_API_SECRET=  
+    ```
 5. Start the development server:  
     ```bash  
     npm run dev  
